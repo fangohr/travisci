@@ -1,4 +1,5 @@
 import math
+import sys
 
 # fuzz testing tools
 from hypothesis import given, assume
@@ -17,8 +18,14 @@ def test_my_sum_integers(x, y):
 @given(x=floats(), y=floats())
 def test_my_sum_floats(x, y):
     print(x, y)
-    assume(math.isfinite(x))
-    assume(math.isfinite(y))
+
+    # math.isfinite was introduced in python 3.2
+    if sys.version_info[0:3] > (3, 2, 0):
+        assume(math.isfinite(x))
+        assume(math.isfinite(y))
+    else:
+        assume(not math.isnan(x) and not math.isinf(x))
+        assume(not math.isnan(y) and not math.isinf(y))
     assert x + y == mysum(x, y)
 
 
